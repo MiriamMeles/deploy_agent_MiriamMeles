@@ -31,14 +31,23 @@ PROJECT_DIR=""
 
 ask_project_name() {
     local project_name
-    read -r -p "Project name (attendance_tracker_<name>): " project_name
-    [[ "$project_name" =~ ^[A-Za-z0-9_-]+$ ]] || die "Name must use only letters, digits, '_' or '-'."
-    PROJECT_DIR="attendance_tracker_${name}"
+    read -r -p "Enter project name (attendance_tracker_<name>): " project_name
+    [[ "$project_name" =~ ^[A-Za-z0-9_-]+$ ]] || die "Use only letters, digits, '_' or '-'."
+    PROJECT_DIR="attendance_tracker_${project_name}"
 }
 
 deploy_project() {
     preflight_checks
     ask_project_name
+        if [ -e "$PROJECT_DIR" ]; then
+        local answer
+
+        read -r -p "'$PROJECT_DIR' already exists. Overwrite? (y/n): " answer
+        [[ "$answer" =~ ^[Yy]$ ]] ||
+	       	die "Aborted: '$PROJECT_DIR'  exists and was not modified."
+        rm -rf "$PROJECT_DIR" || 
+		die "Unable to remove existing '$PROJECT_DIR'."
+    fi
     echo "Using project directory: $PROJECT_DIR"
 }
 
