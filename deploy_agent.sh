@@ -57,7 +57,18 @@ deploy_project() {
     cp "$TEMPLATES_DIR/config.json" "$PROJECT_DIR/Helpers/" ||
         die "Copying config.json FAILED."
 
-    template_roster
+        echo "Choose roster setup:"
+    echo "  A) Copy from templates/assets.csv"
+    echo "  B) Generate a fresh roster"
+    local option
+    while true; do
+	    read -r -p "Select an option A or B: " option
+	   case "${option^^}" in
+            A) template_roster; break ;;
+            B) generate_roster; break ;;
+            *) echo "Please type A or B." ;;
+        esac
+    done
 
     echo "$PROJECT_DIR with Helpers/ and reports/ CREATED"
 }
@@ -83,4 +94,42 @@ template_roster() {
 
     echo "Copied $count students (4 prior sessions each), so total_sessions stays 5."
 }
+
+SAMPLE_NAMES=("Tedros Hawi" "Michael Omondi" "Arnold Geneva" "Derrick Opiyo" "Yorda Tekleab")
+SAMPLE_EMAILS=("tedros@example.com" "michael@example.com" "arnold@example.com" "derrick@example.com"
+               "yorda@example.com")
+
+generate_roster() {
+    local max=${#SAMPLE_NAMES[@]} count i
+
+    while true; do
+        read -r -p "How many students should be generated (1-$max)? " count
+
+        if [[ "$count" =~ ^[0-9]+$ ]] &&
+	[ "$count" -ge 1 ] &&
+       	[ "$count" -le "$max" ]; then
+            break
+        fi
+
+        echo "Enter a whole number between 1 and $max."
+    done
+
+    {
+        echo "Email,Names,Attendance Count,Absence Count"
+
+        for ((i = 0; i < count; i++)); do
+            echo "${SAMPLE_EMAILS[$i]},${SAMPLE_NAMES[$i]},0,0"
+        done
+    } > "$PROJECT_DIR/Helpers/assets.csv" ||
+	 die "Creating new roster FAILED."
+
+        sed -i.bak -E \
+        's/("total_sessions":[[:space:]]*)[0-9]+/\11/' \
+        "$PROJECT_DIR/Helpers/config.json" ||
+        die "Updating total_sessions FAILED."
+
+    rm -f "$PROJECT_DIR/Helpers/config.json.bak"
+    echo "Generated $count students (0/0 counts), so total_sessions set to 1."
+}
+
 deploy_project
