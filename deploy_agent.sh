@@ -48,7 +48,16 @@ deploy_project() {
         rm -rf "$PROJECT_DIR" || 
 		die "Unable to remove existing '$PROJECT_DIR'."
     fi
-    echo "Using project directory: $PROJECT_DIR"
+        mkdir -p "$PROJECT_DIR/Helpers" "$PROJECT_DIR/reports" ||
+        die "Creating directories FAILED."
+
+    cp "$TEMPLATES_DIR/attendance_checker.py" "$PROJECT_DIR/" ||
+	die "Copying attendance_checker.py FAILED"
+
+    cp "$TEMPLATES_DIR/config.json" "$PROJECT_DIR/Helpers/" ||
+        die "Copying config.json FAILED."
+
+    echo "$PROJECT_DIR with Helpers/ and reports/ CREATED"
 }
 
 deploy_project
