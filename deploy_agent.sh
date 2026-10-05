@@ -77,6 +77,7 @@ deploy_project() {
     echo "Permissions SET:"
     ls -l "$PROJECT_DIR/attendance_checker.py" "$PROJECT_DIR/Helpers/config.json"
 
+
     echo "$PROJECT_DIR with Helpers/ and reports/ CREATED"
 }
 
@@ -137,6 +138,24 @@ generate_roster() {
 
     rm -f "$PROJECT_DIR/Helpers/config.json.bak"
     echo "Generated $count students (0/0 counts), so total_sessions set to 1."
+}
+
+read_threshold() {
+    local label="$1"
+    local default="$2" input
+
+    while true; do
+        read -r -p "New $label threshold [default $default]: " input
+
+        input="${input:-$default}"
+
+        if [[ "$input" =~ ^[0-9]+$ ]] && [ "$input" -le 100 ]; then
+            echo "$input"
+            return
+        fi
+
+        echo "Incorect input. Please enter a whole number between 0 and 100." >&2
+    done
 }
 
 deploy_project
