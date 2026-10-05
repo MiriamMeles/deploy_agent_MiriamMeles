@@ -69,6 +69,13 @@ deploy_project() {
             *) echo "Please type A or B." ;;
         esac
     done
+ 
+    chmod +x "$PROJECT_DIR/attendance_checker.py" &&
+    chmod 600 "$PROJECT_DIR/Helpers/config.json" ||
+        die "Setting permissions FAILED."
+
+    echo "Permissions SET:"
+    ls -l "$PROJECT_DIR/attendance_checker.py" "$PROJECT_DIR/Helpers/config.json"
 
     echo "$PROJECT_DIR with Helpers/ and reports/ CREATED"
 }
