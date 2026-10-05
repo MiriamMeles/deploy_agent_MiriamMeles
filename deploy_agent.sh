@@ -57,7 +57,30 @@ deploy_project() {
     cp "$TEMPLATES_DIR/config.json" "$PROJECT_DIR/Helpers/" ||
         die "Copying config.json FAILED."
 
+    template_roster
+
     echo "$PROJECT_DIR with Helpers/ and reports/ CREATED"
 }
 
+template_roster() {
+    local students count
+
+   students=$(( $(grep -c '' "$TEMPLATES_DIR/assets.csv") - 1 ))
+
+   while true; do
+        read -r -p "Number of studets to be copied (1-$students)? " count
+        if [[ "$count" =~ ^[0-9]+$ ]] && [ "$count" -ge 1 ] && [ "$count" -le "$students" ]; then
+            break
+        fi
+
+        echo "Please enter a whole number between 1 and $students."
+    done
+
+    head -n $((count + 1)) \
+	    "$TEMPLATES_DIR/assets.csv" \
+	    > "$PROJECT_DIR/Helpers/assets.csv" ||
+            die "Failed to write roster."
+
+    echo "Copied $count students (4 prior sessions each), so total_sessions stays 5."
+}
 deploy_project
