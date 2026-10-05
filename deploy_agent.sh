@@ -27,4 +27,19 @@ preflight_checks() {
     echo "Pre-flight installed: $(python3 --version)"
 }
 
-preflight_checks
+PROJECT_DIR=""
+
+ask_project_name() {
+    local project_name
+    read -r -p "Project name (attendance_tracker_<name>): " project_name
+    [[ "$project_name" =~ ^[A-Za-z0-9_-]+$ ]] || die "Name must use only letters, digits, '_' or '-'."
+    PROJECT_DIR="attendance_tracker_${name}"
+}
+
+deploy_project() {
+    preflight_checks
+    ask_project_name
+    echo "Using project directory: $PROJECT_DIR"
+}
+
+deploy_project
