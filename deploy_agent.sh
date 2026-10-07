@@ -76,8 +76,6 @@ deploy_project() {
 
     echo "Permissions SET:"
     ls -l "$PROJECT_DIR/attendance_checker.py" "$PROJECT_DIR/Helpers/config.json"
- echo "Permissions SET:"
-    ls -l "$PROJECT_DIR/attendance_checker.py" "$PROJECT_DIR/Helpers/config.json"
 
     update_thresholds
 
