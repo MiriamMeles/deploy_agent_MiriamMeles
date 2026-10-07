@@ -28,6 +28,7 @@ preflight_checks() {
 }
 
 PROJECT_DIR=""
+PROJECT_CREATED=0
 
 ask_project_name() {
     local project_name
