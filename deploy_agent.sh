@@ -79,7 +79,7 @@ deploy_project() {
 
     update_thresholds
 
-    echo "$PROJECT_DIRECTORY with Helpers/ and reports/ CREATED"
+    echo "$PROJECT_DIR with Helpers/ and reports/ CREATED"
 
     echo "Verifying deployment by launching the application..."
     run_in_project "$PROJECT_DIR"
@@ -205,4 +205,40 @@ run_in_project() {
     ( cd "$dir" && python3 attendance_checker.py )
 }
 
-deploy_project
+run_app() {
+    ask_project_name
+    run_in_project "$PROJECT_DIR"
+}
+
+menu() {
+    echo "=== Attendance Tracker ==="
+    echo "1) Deploy the application"
+    echo "2) Start the application"
+    echo "3) Archive log files"
+    echo "4) Exit"
+
+    local choice
+    read -r -p "Choose an option [1-4]: " option
+
+    case "$option" in
+        1) deploy_project ;;
+        2) run_app ;;
+        3) archive_logs ;;
+        4) exit 0 ;;
+        *) die "Invalid choice." ;;
+    esac
+}
+ 
+case "${1:-}" in
+    deploy)
+	  deploy_project ;;
+    run)
+	  run_app ;;
+    archive)
+	  archive_logs ;;
+    "")      
+	  menu ;;
+    *)      
+	  die "Usage: $0 [deploy|run|archive]" ;;
+esac
+
