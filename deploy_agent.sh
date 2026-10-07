@@ -76,9 +76,16 @@ deploy_project() {
 
     echo "Permissions SET:"
     ls -l "$PROJECT_DIR/attendance_checker.py" "$PROJECT_DIR/Helpers/config.json"
+ echo "Permissions SET:"
+    ls -l "$PROJECT_DIR/attendance_checker.py" "$PROJECT_DIR/Helpers/config.json"
 
+    update_thresholds
 
-    echo "$PROJECT_DIR with Helpers/ and reports/ CREATED"
+    echo "$PROJECT_DIRECTORY with Helpers/ and reports/ CREATED"
+
+    echo "Verifying deployment by launching the application..."
+    run_in_project "$PROJECT_DIR"
+
 }
 
 template_roster() {
@@ -156,6 +163,48 @@ read_threshold() {
 
         echo "Incorect input. Please enter a whole number between 0 and 100." >&2
     done
+}
+
+    update_thresholds() {
+    local answer
+    local warning
+    local failure
+    local config="$PROJECT_DIR/Helpers/config.json"
+
+    read -r -p "Would you like to update attendance alert thresholds? (y/N): " answer
+
+    if [[ ! "$answer" =~ ^[Yy]$ ]]; then
+	 echo "Default thresholds will be kept."
+	 return
+    fi
+    while true; do
+        warning=$(read_threshold "warning" 75)
+        failure=$(read_threshold "failure" 50)
+
+        if [ "$failure" -lt "$warning" ]; then
+	    break
+	fi
+
+        echo "Failure threshold must be lower than the warning threshold."
+    done
+
+    sed -i.bak -E \
+        -e "s/(\"warning\":[[:space:]]*)[0-9]+/\1${warning}/" \
+        -e "s/(\"failure\":[[:space:]]*)[0-9]+/\1${failure}/" \
+        "$config" || die "Updating attendance thresholds FAILED."
+
+    rm -f "$config.bak"
+
+    echo "Thresholds UPDATED: warning=$warning failure=$failure"
+    grep -E '"(warning|failure)"' "$config"
+
+}
+
+run_in_project() {
+    local dir="$1"
+    [ -d "$dir" ] || die "Project '$dir' not found. Deploy it first."
+    [ -f "$dir/attendance_checker.py" ] || die "'$dir' is not a valid deployment."
+    ( cd "$dir" && python3 attendance_checker.py )
 }
 
 deploy_project
