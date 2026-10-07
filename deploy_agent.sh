@@ -210,6 +210,33 @@ run_app() {
     run_in_project "$PROJECT_DIR"
 }
 
+archive_logs() {
+    ask_project_name
+    [ -d "$PROJECT_DIR" ] || die "Project '$PROJECT_DIR' was not found."
+
+    local timestamp category src dst archived=0
+    timestamp=$(date +%Y%m%d_%H%M%S)
+
+    for category in attendance absent; do
+        src="$PROJECT_DIR/reports/${category}.log"
+        dst="$PROJECT_DIR/archives/${category}/${category}_${timestamp}.log"
+
+        if [ -f "$src" ]; then
+            mkdir -p "$PROJECT_DIR/archives/${category}" ||
+		   die "Could not create archive directory"
+	    
+            cp "$src" "$dst" || 
+		   die "Could not archive $src"
+
+            echo "Archived ${category}.log to $dst"
+            archived=$((archived + 1))
+        else
+            echo "Skipped: $src does not exist."
+        fi
+    done
+    echo "Archive complete: $archived log(s) archived."
+}
+
 menu() {
     echo "=== Attendance Tracker ==="
     echo "1) Deploy the application"
