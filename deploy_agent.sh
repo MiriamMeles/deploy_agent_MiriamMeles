@@ -257,6 +257,27 @@ menu() {
     esac
 }
  
+handle_interrupt() {
+    trap '' INT TSTP
+    echo
+    echo "!! Deployment interrupted by user."
+    if [ "$PROJECT_CREATED" -eq 1 ] && [ -d "$PROJECT_DIR" ]; then
+        local zipfile="${PROJECT_DIR}_archive.zip"
+        echo "-> Archiving incomplete project into $zipfile ..."
+        if zip -rq "$zipfile" "$PROJECT_DIR"; then
+            echo "-> Archive created: $zipfile"
+            echo "-> Removing incomplete directory $PROJECT_DIR ..."
+            rm -rf "$PROJECT_DIR"
+        else
+            echo "-> zip failed; keeping $PROJECT_DIR so no work is lost." >&2
+        fi
+    else
+        echo "-> Nothing was created yet, so nothing to archive."
+    fi
+    echo "Session closed cleanly."
+    exit 130
+
+}
 case "${1:-}" in
     deploy)
 	  deploy_project ;;
