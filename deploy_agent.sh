@@ -250,7 +250,7 @@ menu() {
     echo "3) Archive log files"
     echo "4) Exit"
 
-    local choice
+    local option
     read -r -p "Choose an option [1-4]: " option
 
     case "$option" in
