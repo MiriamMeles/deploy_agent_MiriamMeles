@@ -49,8 +49,10 @@ deploy_project() {
         rm -rf "$PROJECT_DIR" || 
 		die "Unable to remove existing '$PROJECT_DIR'."
     fi
+    trap handle_interrupt INT TSTP
         mkdir -p "$PROJECT_DIR/Helpers" "$PROJECT_DIR/reports" ||
         die "Creating directories FAILED."
+	PROJECT_CREATED=1
 
     cp "$TEMPLATES_DIR/attendance_checker.py" "$PROJECT_DIR/" ||
 	die "Copying attendance_checker.py FAILED"
@@ -81,6 +83,9 @@ deploy_project() {
     update_thresholds
 
     echo "$PROJECT_DIR with Helpers/ and reports/ CREATED"
+
+    PROJECT_CREATED=0
+    trap - INT TSTP
 
     echo "Verifying deployment by launching the application..."
     run_in_project "$PROJECT_DIR"
