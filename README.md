@@ -98,3 +98,67 @@ attendance_tracker_trap1/attendance_checker.py
 If you press Ctrl+C before anything has been created (for example at the name prompt), there is nothing to archive and the script just exits cleanly.
 
 ---
+
+## Project Folder Structure After Running
+
+**The repository:**
+```
+deploy_agent_MiriamMeles/
+├── deploy_agent.sh
+├── README.md
+├── .gitignore
+└── templates/
+    ├── attendance_checker.py
+    ├── assets.csv
+    └── config.json
+```
+
+**A deployed project** (for example, after choosing Deploy and naming it `v1`):
+```
+attendance_tracker_v1/
+├── attendance_checker.py
+├── Helpers/
+│   ├── assets.csv
+│   └── config.json
+└── reports/
+```
+
+**After the app has run** (the app creates the two logs itself):
+```
+attendance_tracker_v1/
+├── attendance_checker.py
+├── Helpers/
+│   ├── assets.csv
+│   └── config.json
+└── reports/
+    ├── attendance.log
+    └── absent.log
+```
+
+**After archiving the logs** (each log goes into its own folder with a timestamp in the name):
+```
+attendance_tracker_v1/
+├── attendance_checker.py
+├── Helpers/
+│   ├── assets.csv
+│   └── config.json
+├── reports/
+│   ├── attendance.log
+│   └── absent.log
+└── archives/
+    ├── attendance/
+    │   └── attendance_YYYYMMDD_HHMMSS.log
+    └── absent/
+        └── absent_YYYYMMDD_HHMMSS.log
+```
+
+If nobody was marked absent, `absent.log` is never created, so only the `attendance/` archive appears and the script reports that `absent.log` was skipped.
+
+### How the Structure Was Tested
+After each deployment I ran:
+```bash
+find attendance_tracker_v1 | sort
+```
+and compared the output with the required structure from the assignment.
+
+---
