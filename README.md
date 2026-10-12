@@ -161,4 +161,35 @@ find attendance_tracker_v1 | sort
 ```
 and compared the output with the required structure from the assignment.
 
+
+## How Deploy Works
+
+Choosing **Deploy** runs these steps in order:
+
+1. **Pre-flight checks:** confirms `python3` and `zip` are installed and prints the Python version. If either is missing, the script stops with a clear error.
+2. **Project name:** asks for a name (letters, digits, `_` and `-` only) and builds `attendance_tracker_<name>/`. If that folder already exists, you choose to overwrite it or abort. Nothing is overwritten silently.
+3. **Structure and files:** creates `Helpers/` and `reports/`, then copies `attendance_checker.py` and `config.json` unmodified from `templates/`.
+4. **Roster:** you choose how `Helpers/assets.csv` is built (see below).
+5. **Permissions:** `attendance_checker.py` is made executable (`chmod +x`) and `Helpers/config.json` is restricted to owner read/write (`chmod 600`). The script prints the result with `ls -l`.
+6. **Thresholds:** offers to update the alert thresholds (see below).
+7. **Verify:** launches the app. A successful start shows that the structure, roster and config work together.
+
+
+### Roster Options
+- **Option A, copy from the template:** asks how many students (1 to 10) and copies that many rows plus the header from `templates/assets.csv`. Each sample student has 4 prior sessions recorded.
+- **Option B, generate a fresh roster:** asks how many students (1 to 5) and builds the rows from sample name and email arrays inside the script. Attendance and absence counts start at 0.
+
+Both prompts reject anything that is not a whole number in range.
+
+### Why `total_sessions` Changes
+`total_sessions` in `config.json` is the number of prior sessions in the roster plus one (today's session).
+- Option A has 4 prior sessions, so `total_sessions` stays **5**.
+- Option B has no prior sessions, so the script sets `total_sessions` to **1** using `sed`.
+
+### Updating the Alert Thresholds
+The script asks whether you want to change the attendance alert thresholds. If you answer yes:
+1. It asks for a **warning** value (default 75) and a **failure** value (default 50). Pressing Enter keeps the default.
+2. Each value must be a whole number from 0 to 100, and failure must be lower than warning. Otherwise you are asked again, so `sed` never receives bad input.
+3. `sed` then edits only the number on the `"warning"` and `"failure"` lines of `Helpers/config.json`. The file is not reformatted or reordered.
+
 ---
