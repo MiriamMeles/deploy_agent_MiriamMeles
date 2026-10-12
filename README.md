@@ -192,4 +192,21 @@ The script asks whether you want to change the attendance alert thresholds. If y
 2. Each value must be a whole number from 0 to 100, and failure must be lower than warning. Otherwise you are asked again, so `sed` never receives bad input.
 3. `sed` then edits only the number on the `"warning"` and `"failure"` lines of `Helpers/config.json`. The file is not reformatted or reordered.
 
+
+## Running the Application
+
+Choose **Start the application** from the menu (or run `./deploy_agent.sh run`), then enter the project name. The script runs `python3 attendance_checker.py` inside that project. The app asks you to mark each student present (`P`) or absent (`A`), updates `Helpers/assets.csv`, and writes the session logs into `reports/`.
+
 ---
+
+## Archiving the Log Files
+
+After a run, choose **Archive log files** (or run `./deploy_agent.sh archive`) and enter the project name.
+
+- `reports/attendance.log` is copied to `archives/attendance/attendance_YYYYMMDD_HHMMSS.log`
+- `reports/absent.log` is copied to `archives/absent/absent_YYYYMMDD_HHMMSS.log`
+
+The timestamp makes every archived copy unique and traceable. The script prints which logs were archived and their final paths. If a log does not exist (for example, nobody was absent, so `absent.log` was never created), the script reports that it was skipped and carries on without crashing. The original logs stay in `reports/`.
+
+---
+
