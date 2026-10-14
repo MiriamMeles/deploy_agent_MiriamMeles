@@ -209,4 +209,5 @@ After a run, choose **Archive log files** (or run `./deploy_agent.sh archive`) a
 The timestamp makes every archived copy unique and traceable. The script prints which logs were archived and their final paths. If a log does not exist (for example, nobody was absent, so `absent.log` was never created), the script reports that it was skipped and carries on without crashing. The original logs stay in `reports/`.
 
 ---
-
+## Video to Explain How the Code Works
+https://drive.google.com/drive/u/0/my-drive
