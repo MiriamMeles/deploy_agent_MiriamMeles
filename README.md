@@ -210,4 +210,4 @@ The timestamp makes every archived copy unique and traceable. The script prints 
 
 ---
 ## Video to Explain How the Code Works
-https://drive.google.com/drive/u/0/my-drive
+https://drive.google.com/file/d/1xNCHHhMs_VETVDOsWv_8z69NIJeWvgXw/view?usp=drive_link
